@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
     private float _yLaserOffset;
     [SerializeField]
     private float _fireRate = 0.5f;
+    [SerializeField]
+    private int _playerLives = 3;
 
 
     private Vector3 _laserOffset = new Vector3();
@@ -98,5 +100,15 @@ public class Player : MonoBehaviour
 
         // apply binding restrictions
         transform.position = _bindPosition;
+    }
+    
+    public void DamagePlayer()
+    {
+        _playerLives--;
+
+        if (_playerLives <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
