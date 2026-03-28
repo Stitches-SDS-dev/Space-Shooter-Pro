@@ -9,13 +9,7 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _despawnPosition;
     private Vector3 _direction = Vector3.up;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
         // move laser

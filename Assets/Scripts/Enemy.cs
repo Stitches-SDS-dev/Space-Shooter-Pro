@@ -20,13 +20,6 @@ public class Enemy : MonoBehaviour
     private Vector3 _respawnPosition = Vector3.zero;
     private float _xRespawnPosition;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         // move down at appropriate speed
@@ -54,13 +47,14 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // if hit by Player Laser, destroy this enemy
+        // if hit by Player Laser, destroy this Enemy
         if (other.CompareTag("Laser"))
         {
             Debug.Log(other.transform.name);
             Destroy(other.gameObject);
             Destroy(this.gameObject);
         } 
+        // if colliding with Player, damage Player and destroy this Enemy
         else if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();

@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     [Header("Player Dateils")]
     [SerializeField]
+    private int _playerLives = 3;
+    [SerializeField]
     private Vector3 _startPosition = new Vector3(0, -3, 0);
     [SerializeField]
     private float _playerSpeed = 2.5f;
@@ -17,25 +19,21 @@ public class Player : MonoBehaviour
 
     [Header("Player Binds")]
     [SerializeField]
-    private float _leftPlayerBind;
+    private bool _shouldWrap = false;
     [SerializeField]
-    private float _rightPlayerBind;
-    [SerializeField]
-    private float _upperPlayerBind;
-    [SerializeField]
-    private float _lowerPlayerBind;
+    private float _playerWrap, _xPlayerBind, _upperPlayerBind, _lowerPlayerBind;
 
-    [Header("Additional Settings")]
+    [Header("Laser Settings")]
     [SerializeField]
     private GameObject _laserPrefab;
+    [SerializeField]
+    private Transform _laserParent;
     [SerializeField]
     private float _yLaserOffset;
     [SerializeField]
     private float _fireRate = 0.5f;
-    [SerializeField]
-    private int _playerLives = 3;
 
-
+    private SpawnManager _spawnManager;
     private Vector3 _laserOffset = new Vector3();
     private float _canFire = 0f;
 
@@ -43,6 +41,12 @@ public class Player : MonoBehaviour
     {
         // assign starting position
         transform.position = _startPosition;
+
+        _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
+        {
+            Debug.LogError("Spawn Manager not found!");
+        }
     }
 
     void Update()
@@ -50,7 +54,7 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
         // check for input and rate of fire delay
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time > _canFire)
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire)
         {
             FireLaser();
         }
@@ -58,48 +62,48 @@ public class Player : MonoBehaviour
 
     private void FireLaser()
     {
+        // fire laser with an offset above the Player
         _canFire = Time.time + _fireRate;
         _laserOffset = transform.position;
         _laserOffset.y += _yLaserOffset;
-        Instantiate(_laserPrefab, _laserOffset, Quaternion.identity);
+        Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
     }
 
     private void PlayerMovement()
     {
-        // get inputs
-        float hMove = Input.GetAxis("Horizontal");
-        float vMove = Input.GetAxis("Vertical");
-
         // apply inputs to Vector3
-        _playerDirection.x = hMove;
-        _playerDirection.y = vMove;
+        _playerDirection.x = Input.GetAxis("Horizontal");
+        _playerDirection.y = Input.GetAxis("Vertical");
 
         // move player
         transform.Translate(_playerDirection * _playerSpeed * Time.deltaTime);
 
-        // check player binds and set restraints
+        // check player binds and set restraints or wraps        
         _bindPosition = transform.position;
 
-        if (transform.position.x <= _leftPlayerBind)
-        {
-            _bindPosition.x = _leftPlayerBind;
-        }
-        else if (transform.position.x >= _rightPlayerBind)
-        {
-            _bindPosition.x = _rightPlayerBind;
-        }
+        _bindPosition.y = Mathf.Clamp(_bindPosition.y, _lowerPlayerBind, _upperPlayerBind);
 
-        if (transform.position.y >= _upperPlayerBind)
+        if (!_shouldWrap)
         {
-            _bindPosition.y = _upperPlayerBind;
+            // clamp on the x position
+            _bindPosition.x = Mathf.Clamp(_bindPosition.x, -_xPlayerBind, _xPlayerBind);
         }
-        else if (transform.position.y <= _lowerPlayerBind)
+        else
         {
-            _bindPosition.y = _lowerPlayerBind;
+            // or wrap to the opposite side
+            if (transform.position.x <= -_playerWrap)
+            {
+                _bindPosition.x = _playerWrap;
+            }
+            if (transform.position.x >= _playerWrap)
+            {
+                _bindPosition.x = -_playerWrap;
+            }
         }
 
         // apply binding restrictions
         transform.position = _bindPosition;
+        
     }
     
     public void DamagePlayer()
@@ -108,6 +112,7 @@ public class Player : MonoBehaviour
 
         if (_playerLives <= 0)
         {
+            _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
     }
