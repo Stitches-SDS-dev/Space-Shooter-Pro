@@ -528,8 +528,7 @@ MonoBehaviour:
   _enemyParent: {fileID: 354763162}
   _spawnDelay: 5
   _isSpawning: 1
-  _xSpawnLeftBind: -9
-  _xSpawnRightBind: 9
+  _xSpawnBind: 9
   _ySpawnPosition: 7.5
 --- !u!4 &1645978766
 Transform:

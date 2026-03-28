@@ -14,13 +14,10 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private bool _isSpawning = true;
     [SerializeField]
-    private float _xSpawnLeftBind;
-    [SerializeField]
-    private float _xSpawnRightBind;
+    private float _xSpawnBind;
     [SerializeField]
     private float _ySpawnPosition;
 
-    private float _xSpawnPosition;
     private Vector3 _spawnPosition = new Vector3();
 
     void Start()
@@ -37,8 +34,7 @@ public class SpawnManager : MonoBehaviour
         while (_isSpawning)
         {
             // set position parameters
-            _xSpawnPosition = Random.Range(_xSpawnLeftBind, _xSpawnRightBind);
-            _spawnPosition.x = _xSpawnPosition;
+            _spawnPosition.x = Random.Range(-_xSpawnBind, _xSpawnBind);
 
             // spawn
             Instantiate(_enemyPrefab, _spawnPosition, Quaternion.identity, _enemyParent);

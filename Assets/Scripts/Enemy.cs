@@ -13,9 +13,7 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float _yDroppedOffPosition;
     [SerializeField]
-    private float _xRespawnBindLeft;
-    [SerializeField]
-    private float _xRespawnBindRight;
+    private float _xRespawnBind;
 
     private Vector3 _respawnPosition = Vector3.zero;
     private float _xRespawnPosition;
@@ -35,7 +33,7 @@ public class Enemy : MonoBehaviour
     private void Respawn()
     {
         // create random x pos within binds
-        _xRespawnPosition = Random.Range(_xRespawnBindLeft, _xRespawnBindRight);
+        _xRespawnPosition = Random.Range(-_xRespawnBind, _xRespawnBind);
 
         // set respawn location
         _respawnPosition.x = _xRespawnPosition;
@@ -47,7 +45,7 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // if hit by Player Laser, destroy this Enemy
+        // if hit by Laser, destroy this Enemy
         if (other.CompareTag("Laser"))
         {
             Debug.Log(other.transform.name);
@@ -64,6 +62,6 @@ public class Enemy : MonoBehaviour
                 player.DamagePlayer();
                 Destroy(this.gameObject);
             }
-        }
+        }       
     }
 }
