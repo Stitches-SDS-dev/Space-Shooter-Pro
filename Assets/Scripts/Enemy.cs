@@ -43,7 +43,7 @@ public class Enemy : MonoBehaviour
         transform.position = _respawnPosition;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         // if hit by Laser, destroy this Enemy
         if (other.CompareTag("Laser"))
