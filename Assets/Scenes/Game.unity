@@ -218,7 +218,7 @@ MonoBehaviour:
   _playerSpeed: 5
   _playerDirection: {x: 0, y: 0, z: 0}
   _bindPosition: {x: 0, y: 0, z: 0}
-  _shouldWrap: 0
+  _shouldWrap: 1
   _playerWrap: 11.5
   _xPlayerBind: 9
   _upperPlayerBind: 0
@@ -226,8 +226,12 @@ MonoBehaviour:
   _laserPrefab: {fileID: 9106597696740117624, guid: 3812b96faaf9d3846ad32875dc0e752a,
     type: 3}
   _laserParent: {fileID: 661230822}
-  _yLaserOffset: 0.85
+  _yLaserOffset: 0.88
   _fireRate: 0.2
+  _isTripleShotActive: 0
+  _tripleShotPrefab: {fileID: 5607583441352631852, guid: 9dc7ecfd8d0904a4bbff0162c680dff4,
+    type: 3}
+  _tripleShotDuration: 5
 --- !u!212 &395803869
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -265,7 +269,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1717794689
-  m_SortingLayer: 2
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 1b4a8fdd39d3a45d0a9ee484ad6800ec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -349,7 +353,7 @@ GameObject:
   m_Component:
   - component: {fileID: 661230822}
   m_Layer: 0
-  m_Name: Lasers
+  m_Name: Weapons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -538,7 +542,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1468662890}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -598,7 +602,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -232451575
-  m_SortingLayer: 1
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 351f30ffb741fd643b82bde90a222699, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -619,7 +623,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639921375}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.99, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.0813619, y: 1.1336427, z: 1.4299}
   m_Children: []
   m_Father: {fileID: 0}
@@ -654,13 +658,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495c514b829c3a24ba2a1f7173ade954, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab: {fileID: 2868261234427795092, guid: 9fc0fbc458fdb934da9cc63df8bd6678,
-    type: 3}
-  _enemyParent: {fileID: 354763162}
-  _spawnDelay: 5
   _isSpawning: 1
   _xSpawnBind: 9
   _ySpawnPosition: 7.5
+  _enemyPrefab: {fileID: 2868261234427795092, guid: 9fc0fbc458fdb934da9cc63df8bd6678,
+    type: 3}
+  _enemyParent: {fileID: 354763162}
+  _enemySpawnDelay: 5
+  _tripleShotPowerupPrefab: {fileID: 7889324818176877037, guid: 3bda563bdcc1e2a45b28fbba00a46958,
+    type: 3}
+  _powerupParent: {fileID: 67569942}
+  _tripleShotSpawnDelay: 7
 --- !u!4 &1645978766
 Transform:
   m_ObjectHideFlags: 0

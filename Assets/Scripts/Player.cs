@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -33,9 +31,19 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _fireRate = 0.5f;
 
+    [Header("Power Up Options")]
+    [SerializeField]
+    private bool _isTripleShotActive = false;
+    [SerializeField]
+    private GameObject _tripleShotPrefab;
+    [SerializeField]
+    private float _tripleShotDuration;
+
     private SpawnManager _spawnManager;
     private Vector3 _laserOffset = new Vector3();
     private float _canFire = 0f;
+
+    private WaitForSeconds _tripleShotTimer;
 
     void Start()
     {
@@ -47,6 +55,10 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Spawn Manager not found!");
         }
+
+        // set timers
+        _tripleShotTimer = new WaitForSeconds(_tripleShotDuration);
+
     }
 
     void Update()
@@ -54,19 +66,25 @@ public class Player : MonoBehaviour
         PlayerMovement();
 
         // check for input and rate of fire delay
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire)
-        {
-            FireLaser();
-        }
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
     }
 
     private void FireLaser()
     {
         // fire laser with an offset above the Player
         _canFire = Time.time + _fireRate;
-        _laserOffset = transform.position;
-        _laserOffset.y += _yLaserOffset;
-        Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
+        if (!_isTripleShotActive)
+        {
+            // fire standard laser
+            _laserOffset = transform.position;
+            _laserOffset.y += _yLaserOffset;
+            Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
+        }
+        else
+        {
+            // fire triple shot if active
+            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity, _laserParent);
+        }
     }
 
     private void PlayerMovement()
@@ -82,12 +100,9 @@ public class Player : MonoBehaviour
         _bindPosition = transform.position;
 
         _bindPosition.y = Mathf.Clamp(_bindPosition.y, _lowerPlayerBind, _upperPlayerBind);
-
-        if (!_shouldWrap)
-        {
-            // clamp on the x position
-            _bindPosition.x = Mathf.Clamp(_bindPosition.x, -_xPlayerBind, _xPlayerBind);
-        }
+        
+        // clamp on the x position
+        if (!_shouldWrap) _bindPosition.x = Mathf.Clamp(_bindPosition.x, -_xPlayerBind, _xPlayerBind);
         else
         {
             // or wrap to the opposite side
@@ -115,5 +130,17 @@ public class Player : MonoBehaviour
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
+    }
+
+    public void ActivateTripleShot()
+    {
+        _isTripleShotActive = true;
+        StartCoroutine(TripleShotCooldown());
+    }
+
+    private IEnumerator TripleShotCooldown()
+    {
+        yield return _tripleShotTimer;
+        _isTripleShotActive = false;
     }
 }

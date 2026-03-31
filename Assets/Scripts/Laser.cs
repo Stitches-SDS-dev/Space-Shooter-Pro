@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
@@ -16,9 +14,10 @@ public class Laser : MonoBehaviour
         transform.Translate(_direction * _laserSpeed * Time.deltaTime);
 
         // destroy after leaving screen
-        if (transform.position.y > _despawnPosition)
+        if (transform.position.y > _despawnPosition) 
         {
-            Destroy(this.gameObject, 1f);
+            if (transform.parent.name != "Weapons") Destroy(transform.parent.gameObject);
+            Destroy(this.gameObject, 1f); 
         }
     }
 }

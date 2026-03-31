@@ -1,16 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [Header("Spawn Settings")]
-    [SerializeField]
-    private GameObject _enemyPrefab;
-    [SerializeField]
-    private Transform _enemyParent;
-    [SerializeField]
-    private float _spawnDelay;
+    [Header("Global Spawn Settings")]
     [SerializeField]
     private bool _isSpawning = true;
     [SerializeField]
@@ -18,15 +11,37 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private float _ySpawnPosition;
 
+    [Header("Enemy Spawn Settings")]
+    [SerializeField]
+    private GameObject _enemyPrefab;
+    [SerializeField]
+    private Transform _enemyParent;
+    [SerializeField]
+    private float _enemySpawnDelay;
+
+    [Header("Powerup Spawn Settings")]
+    [SerializeField]
+    private GameObject _tripleShotPowerupPrefab;
+    [SerializeField]
+    private Transform _powerupParent;
+    [SerializeField]
+    private float _tripleShotSpawnDelay;
+
     private Vector3 _spawnPosition = new Vector3();
+    private WaitForSeconds _enemySpawnTimer;
+    private WaitForSeconds _tripleShotSpawnTimer;
 
     void Start()
     {
+        _enemySpawnTimer = new WaitForSeconds(_enemySpawnDelay);
+        _tripleShotSpawnTimer = new WaitForSeconds(_tripleShotSpawnDelay);
+
         // set upper spawn point for enemies
         _spawnPosition.y = _ySpawnPosition;
 
         // start spawning
         StartCoroutine(SpawnEnemies());
+        StartCoroutine(SpawnPowerups());
     }
 
     private IEnumerator SpawnEnemies()
@@ -38,7 +53,19 @@ public class SpawnManager : MonoBehaviour
 
             // spawn
             Instantiate(_enemyPrefab, _spawnPosition, Quaternion.identity, _enemyParent);
-            yield return new WaitForSeconds(_spawnDelay);
+            yield return _enemySpawnTimer;
+        }
+    }
+
+    private IEnumerator SpawnPowerups()
+    {
+        while (_isSpawning)
+        {            
+            yield return _tripleShotSpawnTimer;
+            // set position parameters
+            _spawnPosition.x = Random.Range(-_xSpawnBind, _xSpawnBind);
+
+            Instantiate(_tripleShotPowerupPrefab, _spawnPosition, Quaternion.identity, _powerupParent);
         }
     }
 

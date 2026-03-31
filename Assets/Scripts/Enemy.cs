@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
@@ -24,10 +22,7 @@ public class Enemy : MonoBehaviour
         transform.Translate(_enemyDirection * _enemySpeed * Time.deltaTime);
 
         // at bottom respawn at random x position
-        if (transform.position.y < _yDroppedOffPosition)
-        {
-            Respawn();
-        }
+        if (transform.position.y < _yDroppedOffPosition) Respawn();
     }
 
     private void Respawn()
