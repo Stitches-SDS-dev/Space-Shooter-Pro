@@ -36,14 +36,10 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     [SerializeField]
     private GameObject _tripleShotPrefab;
-    [SerializeField]
-    private float _tripleShotDuration;
 
     private SpawnManager _spawnManager;
     private Vector3 _laserOffset = new Vector3();
     private float _canFire = 0f;
-
-    private WaitForSeconds _tripleShotTimer;
 
     void Start()
     {
@@ -51,14 +47,7 @@ public class Player : MonoBehaviour
         transform.position = _startPosition;
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-        if (_spawnManager == null)
-        {
-            Debug.LogError("Spawn Manager not found!");
-        }
-
-        // set timers
-        _tripleShotTimer = new WaitForSeconds(_tripleShotDuration);
-
+        if (_spawnManager == null) Debug.LogError("Spawn Manager not found!");
     }
 
     void Update()
@@ -131,16 +120,42 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+    #region Powerups
+    public void SelectPowerup(Powerup.PowerupType powerupType, WaitForSeconds timer, float bonus)
+    {
+        switch (powerupType)
+        {
+            case Powerup.PowerupType.TripleShot:
+                ActivateTripleShot(timer);
+                break;
+            case Powerup.PowerupType.SpeedBoost:
+                ActivateSpeedBoost(timer, bonus);
+                break;
+        }
+    }
 
-    public void ActivateTripleShot()
+    private void ActivateSpeedBoost(WaitForSeconds timer, float bonus)
+    {
+        _playerSpeed += bonus;
+        StartCoroutine(SpeedBoostCooldown(timer, bonus));
+    }
+
+    private IEnumerator SpeedBoostCooldown(WaitForSeconds timer, float bonus)
+    {
+        yield return timer;
+        _playerSpeed -= bonus;
+    }
+
+    private void ActivateTripleShot(WaitForSeconds timer)
     {
         _isTripleShotActive = true;
-        StartCoroutine(TripleShotCooldown());
+        StartCoroutine(TripleShotCooldown(timer));
     }
 
-    private IEnumerator TripleShotCooldown()
+    private IEnumerator TripleShotCooldown(WaitForSeconds timer)
     {
-        yield return _tripleShotTimer;
+        yield return timer;
         _isTripleShotActive = false;
     }
+    #endregion
 }

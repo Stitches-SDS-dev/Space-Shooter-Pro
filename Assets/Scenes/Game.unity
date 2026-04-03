@@ -231,7 +231,6 @@ MonoBehaviour:
   _isTripleShotActive: 0
   _tripleShotPrefab: {fileID: 5607583441352631852, guid: 9dc7ecfd8d0904a4bbff0162c680dff4,
     type: 3}
-  _tripleShotDuration: 5
 --- !u!212 &395803869
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -665,10 +664,12 @@ MonoBehaviour:
     type: 3}
   _enemyParent: {fileID: 354763162}
   _enemySpawnDelay: 5
+  _powerupParent: {fileID: 67569942}
+  _powerupSpawnDelay: 7
   _tripleShotPowerupPrefab: {fileID: 7889324818176877037, guid: 3bda563bdcc1e2a45b28fbba00a46958,
     type: 3}
-  _powerupParent: {fileID: 67569942}
-  _tripleShotSpawnDelay: 7
+  _speedBoostPowerupPrefab: {fileID: 1680823266458305563, guid: 6fe1cf78e6608994da13861dbb9bef0e,
+    type: 3}
 --- !u!4 &1645978766
 Transform:
   m_ObjectHideFlags: 0

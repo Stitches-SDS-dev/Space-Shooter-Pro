@@ -21,20 +21,22 @@ public class SpawnManager : MonoBehaviour
 
     [Header("Powerup Spawn Settings")]
     [SerializeField]
-    private GameObject _tripleShotPowerupPrefab;
-    [SerializeField]
     private Transform _powerupParent;
     [SerializeField]
-    private float _tripleShotSpawnDelay;
+    private float _powerupSpawnDelay;
+    [SerializeField]
+    private GameObject _tripleShotPowerupPrefab;
+    [SerializeField]
+    private GameObject _speedBoostPowerupPrefab;
 
     private Vector3 _spawnPosition = new Vector3();
     private WaitForSeconds _enemySpawnTimer;
-    private WaitForSeconds _tripleShotSpawnTimer;
+    private WaitForSeconds _poweruptSpawnTimer;
 
     void Start()
     {
         _enemySpawnTimer = new WaitForSeconds(_enemySpawnDelay);
-        _tripleShotSpawnTimer = new WaitForSeconds(_tripleShotSpawnDelay);
+        _poweruptSpawnTimer = new WaitForSeconds(_powerupSpawnDelay);
 
         // set upper spawn point for enemies
         _spawnPosition.y = _ySpawnPosition;
@@ -61,11 +63,23 @@ public class SpawnManager : MonoBehaviour
     {
         while (_isSpawning)
         {            
-            yield return _tripleShotSpawnTimer;
+            yield return _poweruptSpawnTimer;
             // set position parameters
             _spawnPosition.x = Random.Range(-_xSpawnBind, _xSpawnBind);
 
-            Instantiate(_tripleShotPowerupPrefab, _spawnPosition, Quaternion.identity, _powerupParent);
+            int powerupSelector = Random.Range(0, 2);
+            GameObject powerup = null;
+            switch (powerupSelector)
+            {
+                case 0:
+                    powerup = _tripleShotPowerupPrefab;
+                    break;
+                case 1:
+                    powerup = _speedBoostPowerupPrefab;
+                    break;
+            }
+
+            Instantiate(powerup, _spawnPosition, Quaternion.identity, _powerupParent);
         }
     }
 
