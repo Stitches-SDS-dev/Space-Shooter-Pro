@@ -33,9 +33,16 @@ public class Player : MonoBehaviour
 
     [Header("Power Up Options")]
     [SerializeField]
+    private bool _isShieldActive = false;
+    [SerializeField]
+    private GameObject _shieldBonusVisual;
+    [SerializeField]
+    private int _shieldStrength = 0;
+    [SerializeField]
     private bool _isTripleShotActive = false;
     [SerializeField]
     private GameObject _tripleShotPrefab;
+    
 
     private SpawnManager _spawnManager;
     private Vector3 _laserOffset = new Vector3();
@@ -112,14 +119,26 @@ public class Player : MonoBehaviour
     
     public void DamagePlayer()
     {
-        _playerLives--;
-
-        if (_playerLives <= 0)
+        if (_isShieldActive)
         {
-            _spawnManager.StopSpawning();
-            Destroy(this.gameObject);
+            _shieldStrength--;
+            if (_shieldStrength <= 0)
+            {
+                _isShieldActive = false;
+                _shieldBonusVisual.SetActive(false);
+            }
+        }
+        else
+        {
+            _playerLives--;
+            if (_playerLives <= 0)
+            {
+                _spawnManager.StopSpawning();
+                Destroy(this.gameObject);
+            }
         }
     }
+
     #region Powerups
     public void SelectPowerup(Powerup.PowerupType powerupType, WaitForSeconds timer, float bonus)
     {
@@ -131,7 +150,17 @@ public class Player : MonoBehaviour
             case Powerup.PowerupType.SpeedBoost:
                 ActivateSpeedBoost(timer, bonus);
                 break;
+            case Powerup.PowerupType.ShieldBonus:
+                ActivateShieldBonus((int) bonus);
+                break;
         }
+    }
+
+    private void ActivateShieldBonus(int bonus)
+    {
+        _isShieldActive = true;
+        _shieldStrength = bonus;
+        _shieldBonusVisual.SetActive(true);
     }
 
     private void ActivateSpeedBoost(WaitForSeconds timer, float bonus)
@@ -140,16 +169,16 @@ public class Player : MonoBehaviour
         StartCoroutine(SpeedBoostCooldown(timer, bonus));
     }
 
-    private IEnumerator SpeedBoostCooldown(WaitForSeconds timer, float bonus)
-    {
-        yield return timer;
-        _playerSpeed -= bonus;
-    }
-
     private void ActivateTripleShot(WaitForSeconds timer)
     {
         _isTripleShotActive = true;
         StartCoroutine(TripleShotCooldown(timer));
+    }
+
+    private IEnumerator SpeedBoostCooldown(WaitForSeconds timer, float bonus)
+    {
+        yield return timer;
+        _playerSpeed -= bonus;
     }
 
     private IEnumerator TripleShotCooldown(WaitForSeconds timer)

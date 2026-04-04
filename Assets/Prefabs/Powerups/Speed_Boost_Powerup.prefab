@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8862694311138290469}
   - component: {fileID: 8378052500053480851}
-  - component: {fileID: 3016987624433104031}
-  - component: {fileID: 3472762140966267569}
+  - component: {fileID: 65067230507756872}
   - component: {fileID: 170276170}
+  - component: {fileID: 3472762140966267569}
   m_Layer: 0
   m_Name: Speed_Boost_Powerup
-  m_TagString: Untagged
+  m_TagString: Powerup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &3016987624433104031
+--- !u!95 &65067230507756872
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -94,7 +94,7 @@ Animator:
   m_GameObject: {fileID: 1680823266458305563}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9eac548e7260b7d48b305663b3a64f4a, type: 2}
+  m_Controller: {fileID: 9100000, guid: 857a8826cf8979643886c2e841e4db36, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -103,24 +103,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &3472762140966267569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1680823266458305563}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b6d52f8df695f64fbf5ef947dfbb212, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _powerupType: 1
-  _fallSpeed: 3
-  _yDespawnPosition: -6.5
-  _powerupDirection: {x: 0, y: -1}
-  _duration: 5
-  _bonusApplied: 3.5
 --- !u!61 &170276170
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -147,3 +129,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.2652955, y: 3.6926486}
   m_EdgeRadius: 0
+--- !u!114 &3472762140966267569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680823266458305563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6d52f8df695f64fbf5ef947dfbb212, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _powerupType: 1
+  _fallSpeed: 3
+  _yDespawnPosition: -6.5
+  _powerupDirection: {x: 0, y: -1}
+  _duration: 5
+  _bonusApplied: 3.5

@@ -25,18 +25,17 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private float _powerupSpawnDelay;
     [SerializeField]
-    private GameObject _tripleShotPowerupPrefab;
-    [SerializeField]
-    private GameObject _speedBoostPowerupPrefab;
+    private GameObject[] _powerups;
 
     private Vector3 _spawnPosition = new Vector3();
     private WaitForSeconds _enemySpawnTimer;
-    private WaitForSeconds _poweruptSpawnTimer;
+    private WaitForSeconds _powerupSpawnTimer;
 
     void Start()
     {
+        // consider making a random timer... can this be done without using the new keyword elsewhere?
         _enemySpawnTimer = new WaitForSeconds(_enemySpawnDelay);
-        _poweruptSpawnTimer = new WaitForSeconds(_powerupSpawnDelay);
+        _powerupSpawnTimer = new WaitForSeconds(_powerupSpawnDelay);
 
         // set upper spawn point for enemies
         _spawnPosition.y = _ySpawnPosition;
@@ -63,23 +62,12 @@ public class SpawnManager : MonoBehaviour
     {
         while (_isSpawning)
         {            
-            yield return _poweruptSpawnTimer;
+            yield return _powerupSpawnTimer;
             // set position parameters
             _spawnPosition.x = Random.Range(-_xSpawnBind, _xSpawnBind);
 
-            int powerupSelector = Random.Range(0, 2);
-            GameObject powerup = null;
-            switch (powerupSelector)
-            {
-                case 0:
-                    powerup = _tripleShotPowerupPrefab;
-                    break;
-                case 1:
-                    powerup = _speedBoostPowerupPrefab;
-                    break;
-            }
-
-            Instantiate(powerup, _spawnPosition, Quaternion.identity, _powerupParent);
+            int powerupSelector = Random.Range(0, _powerups.Length);
+            Instantiate(_powerups[powerupSelector], _spawnPosition, Quaternion.identity, _powerupParent);
         }
     }
 

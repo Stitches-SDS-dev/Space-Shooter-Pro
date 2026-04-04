@@ -18,6 +18,7 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     private Vector2 _powerupDirection = Vector3.down;
     [SerializeField]
+    [Tooltip("If Applicable")]
     private float _duration;
     [SerializeField]
     [Tooltip("If Applicable")]
