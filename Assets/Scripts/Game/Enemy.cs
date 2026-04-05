@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
@@ -14,16 +15,26 @@ public class Enemy : MonoBehaviour
     private float _yDroppedOffPosition;
     [SerializeField]
     private float _xRespawnBind;
+    [SerializeField]
+    private float _destroyDelay;
 
     private Vector3 _respawnPosition = Vector3.zero;
     private float _xRespawnPosition;
 
     private Player _player;
+    private Animator _deathAnim;
+    private BoxCollider2D _collider;
 
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null) Debug.LogError("Player not found!");
+
+        _deathAnim = GetComponent<Animator>();
+        if (_deathAnim == null) Debug.LogError("Animator not found!");
+
+        _collider = GetComponent<BoxCollider2D>();
+        if (_collider == null) Debug.LogError("BoxCollider2D not found!");
     }
 
     private void Update()
@@ -54,8 +65,10 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Laser"))
         {
             _player.IncreaseScore(_scoreValue);
+            _deathAnim.SetTrigger("OnEnemyDeath");
+            _collider.enabled = false;
             Destroy(other.gameObject);
-            Destroy(this.gameObject);
+            Destroy(this.gameObject, _destroyDelay);
         } 
         // if colliding with Player, damage Player and destroy this Enemy
         else if (other.CompareTag("Player"))
@@ -63,7 +76,9 @@ public class Enemy : MonoBehaviour
             if (_player != null)
             {
                 _player.DamagePlayer();
-                Destroy(this.gameObject);
+                _deathAnim.SetTrigger("OnEnemyDeath");
+                _collider.enabled = false;
+                Destroy(this.gameObject, _destroyDelay);
             }
         }       
     }

@@ -15,6 +15,8 @@ public class SpawnManager : MonoBehaviour
     private GameObject _weaponParent;
     [SerializeField]
     private Transform[] _objectParents; // 0 = Weapons, 1 = Enemies, 2 = Powerups 
+    [SerializeField]
+    private float _startSpawnDelay;
 
     [Header("Enemy Spawn Settings")]
     [SerializeField]
@@ -35,19 +37,17 @@ public class SpawnManager : MonoBehaviour
     private Vector3 _spawnPosition = new Vector3();
     private WaitForSeconds _enemySpawnTimer;
     private WaitForSeconds _powerupSpawnTimer;
+    private WaitForSeconds _startSpawnTimer;
 
     void Start()
     {
         // consider making a random timer... can this be done without using the new keyword elsewhere?
         _enemySpawnTimer = new WaitForSeconds(_enemySpawnDelay);
         _powerupSpawnTimer = new WaitForSeconds(_powerupSpawnDelay);
+        _startSpawnTimer = new WaitForSeconds(_startSpawnDelay);
 
         // set upper spawn point for enemies
         _spawnPosition.y = _ySpawnPosition;
-
-        // start spawning
-        StartCoroutine(SpawnEnemies());
-        StartCoroutine(SpawnPowerups());
     }
 
     private IEnumerator SpawnEnemies()
@@ -66,6 +66,7 @@ public class SpawnManager : MonoBehaviour
     private IEnumerator SpawnPowerups()
     {
         yield return _powerupSpawnTimer;
+
         while (_isSpawning)
         {            
             // set position parameters
@@ -75,6 +76,19 @@ public class SpawnManager : MonoBehaviour
             Instantiate(_powerups[powerupSelector], _spawnPosition, Quaternion.identity, _objectParents[2]);
             yield return _powerupSpawnTimer;
         }
+    }
+
+    public void StartSpawning()
+    {
+        StartCoroutine(SpawnDelay());
+    }
+
+    private IEnumerator SpawnDelay()
+    {
+        yield return _startSpawnTimer;
+
+        StartCoroutine(SpawnEnemies());
+        StartCoroutine(SpawnPowerups());
     }
 
     public void StopSpawning()

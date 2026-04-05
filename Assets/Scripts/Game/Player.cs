@@ -17,6 +17,10 @@ public class Player : MonoBehaviour
     Vector3 _playerDirection = new Vector3();
     [SerializeField]
     private Vector3 _bindPosition = new Vector3();
+    [SerializeField]
+    private GameObject[] _damageSprites;
+    [SerializeField]
+    private GameObject _explosion;
 
     [Header("Player Binds")]
     [SerializeField]
@@ -139,11 +143,26 @@ public class Player : MonoBehaviour
         {
             _playerLives--;
             _uiManager.UpdateLives(_playerLives);
-            if (_playerLives <= 0)
-            {
-                _uiManager.GameOver();
-                _spawnManager.StopSpawning();
-                Destroy(this.gameObject);
+            switch (_playerLives) {
+                case 0:
+                    Instantiate(_explosion, transform.position, Quaternion.identity);
+                    _uiManager.GameOver();
+                    _spawnManager.StopSpawning();
+                    Destroy(this.gameObject);
+                    break;
+                case 1:
+                    for (int i = 0; i < _damageSprites.Length; i++)
+                    {
+                        if (!_damageSprites[i].activeInHierarchy)
+                        {
+                            _damageSprites[i].SetActive(true);
+                        }                        
+                    }
+                    break;
+                case 2:
+                    int randomDamage = Random.Range(0, _damageSprites.Length);
+                    _damageSprites[randomDamage].SetActive(true);
+                    break;
             }
         }
     }
@@ -195,6 +214,7 @@ public class Player : MonoBehaviour
     {
         yield return timer;
         _isShieldActive = false;
+        _shieldBonusVisual.SetActive(false);
     }
     private IEnumerator SpeedBoostCooldown(WaitForSeconds timer, float bonus)
     {

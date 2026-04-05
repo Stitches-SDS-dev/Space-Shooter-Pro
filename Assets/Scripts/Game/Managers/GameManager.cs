@@ -5,6 +5,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private bool _isGameOver;
+    [SerializeField]
+    private bool _isAsteroidDestroyed;
 
     private void Update()
     {
