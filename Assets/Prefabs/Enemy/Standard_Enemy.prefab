@@ -151,6 +151,7 @@ MonoBehaviour:
   _yDroppedOffPosition: -5.5
   _xRespawnBind: 9
   _destroyDelay: 2.8
+  _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
 --- !u!95 &7976930390768813150
 Animator:
   serializedVersion: 3

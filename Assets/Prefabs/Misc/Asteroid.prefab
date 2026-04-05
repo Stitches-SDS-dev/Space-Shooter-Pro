@@ -138,4 +138,3 @@ MonoBehaviour:
   _destructionDelay: 0.3
   _explosion: {fileID: 686283563982833946, guid: 5f51349ebcc3fda4e8f42dccb34c8492,
     type: 3}
-  _destroyExplosionDelay: 2.7

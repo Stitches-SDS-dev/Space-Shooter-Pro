@@ -6,7 +6,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private bool _isGameOver;
     [SerializeField]
-    private bool _isAsteroidDestroyed;
+    private GameObject _asteroid;
+
+    private void Start()
+    {
+        StartWave();
+    }
 
     private void Update()
     {
@@ -15,6 +20,11 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.M)) MainMenu();
             if (Input.GetKeyDown(KeyCode.R)) RestartGame();
         }
+    }
+
+    public void StartWave()
+    {
+        Instantiate(_asteroid);
     }
 
     public void SetGameOver()

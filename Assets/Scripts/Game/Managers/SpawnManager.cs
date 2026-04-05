@@ -94,7 +94,7 @@ public class SpawnManager : MonoBehaviour
     public void StopSpawning()
     {
         _isSpawning = false;
-        CleanupPrefabs(); //somehow continues to spawn powerups
+        CleanupPrefabs();
     }
 
     private void CleanupPrefabs()

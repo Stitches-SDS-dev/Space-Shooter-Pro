@@ -17,11 +17,14 @@ public class Enemy : MonoBehaviour
     private float _xRespawnBind;
     [SerializeField]
     private float _destroyDelay;
+    [SerializeField]
+    private AudioClip _explosionAudio;
 
     private Vector3 _respawnPosition = Vector3.zero;
     private float _xRespawnPosition;
     private bool _isDying = false;
 
+    private Camera _mainCamera;
     private Player _player;
     private Animator _deathAnim;
     private BoxCollider2D _collider;
@@ -36,6 +39,8 @@ public class Enemy : MonoBehaviour
 
         _collider = GetComponent<BoxCollider2D>();
         if (_collider == null) Debug.LogError("BoxCollider2D not found!");
+
+        _mainCamera = Camera.main;
     }
 
     private void Update()
@@ -68,6 +73,7 @@ public class Enemy : MonoBehaviour
             _isDying = true;
             _player.IncreaseScore(_scoreValue);
             _deathAnim.SetTrigger("OnEnemyDeath");
+            AudioSource.PlayClipAtPoint(_explosionAudio, _mainCamera.transform.position);
             _collider.enabled = false;
             Destroy(other.gameObject);
             Destroy(this.gameObject, _destroyDelay);
@@ -80,6 +86,7 @@ public class Enemy : MonoBehaviour
                 _isDying = true;
                 _player.DamagePlayer();
                 _deathAnim.SetTrigger("OnEnemyDeath");
+                AudioSource.PlayClipAtPoint(_explosionAudio, _mainCamera.transform.position);
                 _collider.enabled = false;
                 Destroy(this.gameObject, _destroyDelay);
             }

@@ -37,6 +37,8 @@ public class Player : MonoBehaviour
     private float _yLaserOffset;
     [SerializeField]
     private float _fireRate = 0.5f;
+    [SerializeField]
+    private AudioClip _laserAudio;
 
     [Header("Power Up Options")]
     [SerializeField]
@@ -49,8 +51,10 @@ public class Player : MonoBehaviour
     private bool _isTripleShotActive = false;
     [SerializeField]
     private GameObject _tripleShotPrefab;
-    
+    [SerializeField]
+    private AudioClip _powerupAudio;
 
+    private Camera _mainCamera;
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     private Vector3 _laserOffset = new Vector3();
@@ -66,6 +70,8 @@ public class Player : MonoBehaviour
 
         _uiManager = GameObject.Find("UI_Manager").GetComponent<UIManager>();
         if (_uiManager == null) Debug.LogError("UI Manager not found!");
+
+        _mainCamera = Camera.main;
     }
 
     void Update()
@@ -92,6 +98,8 @@ public class Player : MonoBehaviour
             // fire triple shot if active
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity, _laserParent);
         }
+
+        AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
     }
 
     private void PlayerMovement()
@@ -148,7 +156,7 @@ public class Player : MonoBehaviour
                     Instantiate(_explosion, transform.position, Quaternion.identity);
                     _uiManager.GameOver();
                     _spawnManager.StopSpawning();
-                    Destroy(this.gameObject);
+                    Destroy(this.gameObject, 0.5f);
                     break;
                 case 1:
                     for (int i = 0; i < _damageSprites.Length; i++)
@@ -176,6 +184,8 @@ public class Player : MonoBehaviour
     #region Powerups
     public void SelectPowerup(Powerup.PowerupType powerupType, WaitForSeconds timer, float bonus)
     {
+        AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+
         switch (powerupType)
         {
             case Powerup.PowerupType.TripleShot:

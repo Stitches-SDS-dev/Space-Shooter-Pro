@@ -6,6 +6,7 @@ public class Laser : MonoBehaviour
     private float _laserSpeed;
     [SerializeField]
     private float _despawnPosition;
+
     private Vector3 _direction = Vector3.up;
 
     void Update()
