@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     private Vector3 _respawnPosition = Vector3.zero;
     private float _xRespawnPosition;
+    private bool _isDying = false;
 
     private Player _player;
     private Animator _deathAnim;
@@ -43,7 +44,7 @@ public class Enemy : MonoBehaviour
         transform.Translate(_enemyDirection * _enemySpeed * Time.deltaTime);
 
         // at bottom respawn at random x position
-        if (transform.position.y < _yDroppedOffPosition) Respawn();
+        if (transform.position.y < _yDroppedOffPosition && !_isDying) Respawn();
     }
 
     private void Respawn()
@@ -64,6 +65,7 @@ public class Enemy : MonoBehaviour
         // if hit by Laser, destroy this Enemy
         if (other.CompareTag("Laser"))
         {
+            _isDying = true;
             _player.IncreaseScore(_scoreValue);
             _deathAnim.SetTrigger("OnEnemyDeath");
             _collider.enabled = false;
@@ -75,6 +77,7 @@ public class Enemy : MonoBehaviour
         {
             if (_player != null)
             {
+                _isDying = true;
                 _player.DamagePlayer();
                 _deathAnim.SetTrigger("OnEnemyDeath");
                 _collider.enabled = false;
