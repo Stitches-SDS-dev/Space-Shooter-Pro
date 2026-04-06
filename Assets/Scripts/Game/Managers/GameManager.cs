@@ -15,6 +15,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (Screen.fullScreen && Input.GetKeyDown(KeyCode.Escape)) Screen.fullScreen = false;
+        if (!Screen.fullScreen && Input.GetKeyDown(KeyCode.Escape)) SceneManager.LoadScene(0);
+
         if (_isGameOver)
         {
             if (Input.GetKeyDown(KeyCode.M)) MainMenu();

@@ -6,6 +6,8 @@ public class Player : MonoBehaviour
 {
     [Header("Player Dateils")]
     [SerializeField]
+    private bool _isAlive = true;
+    [SerializeField]
     private int _playerLives = 3;
     [SerializeField]
     private int _score = 0;
@@ -76,10 +78,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        PlayerMovement();
+        if (_isAlive)
+        {
+            PlayerMovement();
 
-        // check for input and rate of fire delay
-        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
+            // check for input and rate of fire delay
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
+        }
     }
 
     private void FireLaser()
@@ -153,6 +158,7 @@ public class Player : MonoBehaviour
             _uiManager.UpdateLives(_playerLives);
             switch (_playerLives) {
                 case 0:
+                    _isAlive = false;
                     Instantiate(_explosion, transform.position, Quaternion.identity);
                     _uiManager.GameOver();
                     _spawnManager.StopSpawning();
