@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using TMPro.EditorUtilities;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour
 {
@@ -56,6 +56,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _powerupAudio;
 
+    [Header("Thruster Options")]
+    [SerializeField]
+    private bool _isThrusterActive = false;
+    [SerializeField]
+    private float _thrusterBoost;
+    [SerializeField]
+    private SpriteRenderer _thrusterSprite;
+    [SerializeField]
+    private Color _baseColor;
+    [SerializeField]
+    private Color _boostColor = Color.white;
+
     private Camera _mainCamera;
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -80,10 +92,32 @@ public class Player : MonoBehaviour
     {
         if (_isAlive)
         {
+            ThrusterStatus();
             PlayerMovement();
 
             // check for input and rate of fire delay
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
+        }
+    }
+
+    private void ThrusterStatus()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isThrusterActive)
+        {
+            if (!_uiManager.QueryFullDrain())
+            {
+                _uiManager.StartDrainingGauge();
+                _playerSpeed += _thrusterBoost;
+                _thrusterSprite.color = _boostColor;
+                _isThrusterActive = true;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift) && _isThrusterActive)
+        {
+            _uiManager.StopDrainingGauge();
+            _playerSpeed -= _thrusterBoost;
+            _thrusterSprite.color = _baseColor;
+            _isThrusterActive = false;
         }
     }
 
@@ -188,19 +222,19 @@ public class Player : MonoBehaviour
     }
 
     #region Powerups
-    public void SelectPowerup(Powerup.PowerupType powerupType, WaitForSeconds timer, float bonus)
+    public void SelectPowerup(PowerupType powerupType, WaitForSeconds timer, float bonus)
     {
         AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
 
         switch (powerupType)
         {
-            case Powerup.PowerupType.TripleShot:
+            case PowerupType.TripleShot:
                 ActivateTripleShot(timer);
                 break;
-            case Powerup.PowerupType.SpeedBoost:
+            case PowerupType.SpeedBoost:
                 ActivateSpeedBoost(timer, bonus);
                 break;
-            case Powerup.PowerupType.ShieldBonus:
+            case PowerupType.ShieldBonus:
                 ActivateShieldBonus(timer, (int) bonus);
                 break;
         }
@@ -217,6 +251,7 @@ public class Player : MonoBehaviour
     private void ActivateSpeedBoost(WaitForSeconds timer, float bonus)
     {
         _playerSpeed += bonus;
+        _thrusterSprite.color = _boostColor;
         StartCoroutine(SpeedBoostCooldown(timer, bonus));
     }
 
@@ -236,6 +271,7 @@ public class Player : MonoBehaviour
     {
         yield return timer;
         _playerSpeed -= bonus;
+        _thrusterSprite.color = _baseColor;
     }
 
     private IEnumerator TripleShotCooldown(WaitForSeconds timer)

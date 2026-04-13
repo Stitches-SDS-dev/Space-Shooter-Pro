@@ -146,5 +146,4 @@ MonoBehaviour:
   _yDespawnPosition: -6.5
   _powerupDirection: {x: 0, y: -1}
   _duration: 5
-  _bonusApplied: 3.5
-  _pickupAudio: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+  _bonusApplied: 5
