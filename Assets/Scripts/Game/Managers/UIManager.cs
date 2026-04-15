@@ -39,6 +39,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Color _colorChanger;
 
+    [Header("Ammo Display Settings")]
+    [SerializeField]
+    private TMP_Text _ammoText;
+    [SerializeField]
+    private Image _ammoImage;
+
     private WaitForSeconds _pauseForLetter;
     private WaitForSeconds _pauseForFlash;
     private WaitForSeconds _pauseForRestart;
@@ -198,5 +204,11 @@ public class UIManager : MonoBehaviour
     public bool QueryFullDrain()
     {
         return _isFullyDrained;
+    }
+
+    public void UpdateAmmo(int currentAmmo, int maxAmmo)
+    {
+        _ammoText.text = ": " + currentAmmo;
+        _ammoImage.fillAmount = (float)currentAmmo / maxAmmo;
     }
 }

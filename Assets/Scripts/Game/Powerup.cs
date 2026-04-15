@@ -4,7 +4,8 @@ public enum PowerupType
 {
     TripleShot,
     SpeedBoost,
-    ShieldBonus
+    ShieldBonus,
+    AmmoPickup
 }
 
 public class Powerup : MonoBehaviour
