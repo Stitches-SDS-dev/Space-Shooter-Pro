@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 5755311961627274040}
   - component: {fileID: 5755311961627274039}
   - component: {fileID: 5755311961627274038}
-  - component: {fileID: 5755311961627274037}
   - component: {fileID: 5755311961627274036}
+  - component: {fileID: 6548237541987413907}
   m_Layer: 0
   m_Name: Ammo_Powerup
   m_TagString: Untagged
@@ -103,25 +103,6 @@ MonoBehaviour:
   _powerupDirection: {x: 0, y: -1}
   _duration: 0
   _bonusApplied: 12
---- !u!95 &5755311961627274037
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5755311961627274035}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ebe4fa0f72a385441bd5cdd0f20b1785, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!61 &5755311961627274036
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -148,3 +129,22 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.31622586, y: 0.6861368}
   m_EdgeRadius: 0
+--- !u!95 &6548237541987413907
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5755311961627274035}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ebe4fa0f72a385441bd5cdd0f20b1785, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
