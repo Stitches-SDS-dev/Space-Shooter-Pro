@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 
-public class Powerup : MonoBehaviour
+public enum PowerupType
 {
-    public enum PowerupType
-    {
-        TripleShot,
-        SpeedBoost,
-        ShieldBonus
-    }
+    TripleShot,
+    SpeedBoost,
+    ShieldBonus,
+    AmmoPickup
+}
 
+public class Powerup : MonoBehaviour
+{   
     [SerializeField]
     private PowerupType _powerupType;
     [SerializeField]

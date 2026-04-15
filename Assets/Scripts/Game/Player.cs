@@ -1,6 +1,6 @@
 ﻿using System.Collections;
+using TMPro.EditorUtilities;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour
 {
@@ -23,6 +23,10 @@ public class Player : MonoBehaviour
     private GameObject[] _damageSprites;
     [SerializeField]
     private GameObject _explosion;
+    [SerializeField]
+    private int _maxAmmo = 15;
+    [SerializeField]
+    private int _currentAmmo;
 
     [Header("Player Binds")]
     [SerializeField]
@@ -56,6 +60,18 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _powerupAudio;
 
+    [Header("Thruster Options")]
+    [SerializeField]
+    private bool _isThrusterActive = false;
+    [SerializeField]
+    private float _thrusterBoost;
+    [SerializeField]
+    private SpriteRenderer _thrusterSprite;
+    [SerializeField]
+    private Color _baseColor;
+    [SerializeField]
+    private Color _boostColor = Color.white;
+
     private Camera _mainCamera;
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -66,6 +82,8 @@ public class Player : MonoBehaviour
     {
         // assign starting position
         transform.position = _startPosition;
+
+        _currentAmmo = _maxAmmo;
 
         _spawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
         if (_spawnManager == null) Debug.LogError("Spawn Manager not found!");
@@ -80,10 +98,32 @@ public class Player : MonoBehaviour
     {
         if (_isAlive)
         {
+            ThrusterStatus();
             PlayerMovement();
 
             // check for input and rate of fire delay
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
+        }
+    }
+
+    private void ThrusterStatus()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !_isThrusterActive)
+        {
+            if (!_uiManager.QueryFullDrain())
+            {
+                _uiManager.StartDrainingGauge();
+                _playerSpeed += _thrusterBoost;
+                _thrusterSprite.color = _boostColor;
+                _isThrusterActive = true;
+            }
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift) && _isThrusterActive)
+        {
+            _uiManager.StopDrainingGauge();
+            _playerSpeed -= _thrusterBoost;
+            _thrusterSprite.color = _baseColor;
+            _isThrusterActive = false;
         }
     }
 
@@ -93,18 +133,24 @@ public class Player : MonoBehaviour
         _canFire = Time.time + _fireRate;
         if (!_isTripleShotActive)
         {
-            // fire standard laser
-            _laserOffset = transform.position;
-            _laserOffset.y += _yLaserOffset;
-            Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
+            if (_currentAmmo > 0)
+            {
+                // fire standard laser
+                _laserOffset = transform.position;
+                _laserOffset.y += _yLaserOffset;
+                Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
+                AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
+
+                _currentAmmo--;
+                _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
+            }
         }
         else
         {
             // fire triple shot if active
             Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity, _laserParent);
+            AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
         }
-
-        AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
     }
 
     private void PlayerMovement()
@@ -188,22 +234,32 @@ public class Player : MonoBehaviour
     }
 
     #region Powerups
-    public void SelectPowerup(Powerup.PowerupType powerupType, WaitForSeconds timer, float bonus)
+    public void SelectPowerup(PowerupType powerupType, WaitForSeconds timer, float bonus)
     {
         AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
 
         switch (powerupType)
         {
-            case Powerup.PowerupType.TripleShot:
+            case PowerupType.TripleShot:
                 ActivateTripleShot(timer);
                 break;
-            case Powerup.PowerupType.SpeedBoost:
+            case PowerupType.SpeedBoost:
                 ActivateSpeedBoost(timer, bonus);
                 break;
-            case Powerup.PowerupType.ShieldBonus:
+            case PowerupType.ShieldBonus:
                 ActivateShieldBonus(timer, (int) bonus);
                 break;
+            case PowerupType.AmmoPickup:
+                AmmoPickedUp((int)bonus);
+                break;
         }
+    }
+
+    private void AmmoPickedUp(int addAmmo)
+    {
+        _currentAmmo += addAmmo;
+        if (_currentAmmo > _maxAmmo) _currentAmmo = _maxAmmo;
+        _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
     }
 
     private void ActivateShieldBonus(WaitForSeconds timer, int bonus)
@@ -217,6 +273,7 @@ public class Player : MonoBehaviour
     private void ActivateSpeedBoost(WaitForSeconds timer, float bonus)
     {
         _playerSpeed += bonus;
+        _thrusterSprite.color = _boostColor;
         StartCoroutine(SpeedBoostCooldown(timer, bonus));
     }
 
@@ -236,6 +293,7 @@ public class Player : MonoBehaviour
     {
         yield return timer;
         _playerSpeed -= bonus;
+        _thrusterSprite.color = _baseColor;
     }
 
     private IEnumerator TripleShotCooldown(WaitForSeconds timer)
