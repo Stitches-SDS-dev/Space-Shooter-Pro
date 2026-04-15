@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using UnityEditor.Animations;
 using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
@@ -41,7 +40,6 @@ public class SpawnManager : MonoBehaviour
 
     void Start()
     {
-        // consider making a random timer... can this be done without using the new keyword elsewhere?
         _enemySpawnTimer = new WaitForSeconds(_enemySpawnDelay);
         _powerupSpawnTimer = new WaitForSeconds(_powerupSpawnDelay);
         _startSpawnTimer = new WaitForSeconds(_startSpawnDelay);
