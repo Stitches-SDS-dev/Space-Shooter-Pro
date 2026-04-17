@@ -5,7 +5,8 @@ public enum PowerupType
     TripleShot,
     SpeedBoost,
     ShieldBonus,
-    AmmoPickup
+    AmmoPickup,
+    ExtraLife
 }
 
 public class Powerup : MonoBehaviour
@@ -44,9 +45,7 @@ public class Powerup : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             Player player = collision.GetComponent<Player>();
-            if (player != null) player.SelectPowerup(_powerupType, _timer, _bonusApplied);
-
-            Destroy(this.gameObject, 0.1f);
+            if (player != null) player.SelectPowerup(this.gameObject, _powerupType, _timer, _bonusApplied);
         }
     }
 }

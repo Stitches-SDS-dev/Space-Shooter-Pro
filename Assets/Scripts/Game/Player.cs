@@ -77,6 +77,7 @@ public class Player : MonoBehaviour
     private UIManager _uiManager;
     private Vector3 _laserOffset = new Vector3();
     private float _canFire = 0f;
+    private bool _isSpeedBoostActive = false;
 
     void Start()
     {
@@ -234,53 +235,101 @@ public class Player : MonoBehaviour
     }
 
     #region Powerups
-    public void SelectPowerup(PowerupType powerupType, WaitForSeconds timer, float bonus)
+    public void SelectPowerup(GameObject powerup, PowerupType powerupType, WaitForSeconds timer, float bonus)
     {
-        AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
-
         switch (powerupType)
         {
             case PowerupType.TripleShot:
-                ActivateTripleShot(timer);
+                ActivateTripleShot(timer, powerup);
                 break;
             case PowerupType.SpeedBoost:
-                ActivateSpeedBoost(timer, bonus);
+                ActivateSpeedBoost(timer, bonus, powerup);
                 break;
             case PowerupType.ShieldBonus:
-                ActivateShieldBonus(timer, (int) bonus);
+                ActivateShieldBonus(timer, (int) bonus, powerup);
                 break;
             case PowerupType.AmmoPickup:
-                AmmoPickedUp((int)bonus);
+                AmmoPickedUp((int)bonus, powerup);
+                break;
+            case PowerupType.ExtraLife:
+                AddExtraLife((int) bonus, powerup);
                 break;
         }
     }
 
-    private void AmmoPickedUp(int addAmmo)
+    private void AddExtraLife(int bonus, GameObject powerup)
     {
-        _currentAmmo += addAmmo;
-        if (_currentAmmo > _maxAmmo) _currentAmmo = _maxAmmo;
-        _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
+        if (_playerLives < 3)
+        {
+            _playerLives++;
+            switch (_playerLives)
+            {
+                case 2:
+                    int randomDamage = Random.Range(0, _damageSprites.Length);
+                    _damageSprites[randomDamage].SetActive(false);
+                    break;
+                case 3:
+                    for (int i = 0; i < _damageSprites.Length; i++)
+                    {
+                        if (!_damageSprites[i].activeInHierarchy)
+                        {
+                            _damageSprites[i].SetActive(false);
+                        }
+                    }
+                    break;
+            }
+            AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+            Destroy(powerup, 0.1f);
+        }
     }
 
-    private void ActivateShieldBonus(WaitForSeconds timer, int bonus)
+    private void AmmoPickedUp(int addAmmo, GameObject powerup)
     {
-        _isShieldActive = true;
-        _shieldStrength = bonus;
-        _shieldBonusVisual.SetActive(true);
-        StartCoroutine(ShieldBonusCooldown(timer));
+        if (_currentAmmo != _maxAmmo)
+        {
+            _currentAmmo += addAmmo;
+            if (_currentAmmo > _maxAmmo) _currentAmmo = _maxAmmo;
+            _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
+            AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+            Destroy(powerup, 0.1f);
+        }
     }
 
-    private void ActivateSpeedBoost(WaitForSeconds timer, float bonus)
+    private void ActivateShieldBonus(WaitForSeconds timer, int bonus, GameObject powerup)
     {
-        _playerSpeed += bonus;
-        _thrusterSprite.color = _boostColor;
-        StartCoroutine(SpeedBoostCooldown(timer, bonus));
+        if (!_isShieldActive)
+        {
+            _isShieldActive = true;
+            _shieldStrength = bonus;
+            _shieldBonusVisual.SetActive(true);
+            StartCoroutine(ShieldBonusCooldown(timer));
+            AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+            Destroy(powerup, 0.1f);
+        }
     }
 
-    private void ActivateTripleShot(WaitForSeconds timer)
+    private void ActivateSpeedBoost(WaitForSeconds timer, float bonus, GameObject powerup)
     {
-        _isTripleShotActive = true;
-        StartCoroutine(TripleShotCooldown(timer));
+        if (!_isSpeedBoostActive)
+        {
+            _isSpeedBoostActive = true;
+            _playerSpeed += bonus;
+            _thrusterSprite.color = _boostColor;
+            StartCoroutine(SpeedBoostCooldown(timer, bonus));
+            AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+            Destroy(powerup, 0.1f);
+        }
+    }
+
+    private void ActivateTripleShot(WaitForSeconds timer, GameObject powerup)
+    {
+        if (!_isTripleShotActive)
+        {
+            _isTripleShotActive = true;
+            StartCoroutine(TripleShotCooldown(timer));
+            AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+            Destroy(powerup, 0.1f);
+        }
     }
 
     private IEnumerator ShieldBonusCooldown (WaitForSeconds timer)
@@ -292,6 +341,7 @@ public class Player : MonoBehaviour
     private IEnumerator SpeedBoostCooldown(WaitForSeconds timer, float bonus)
     {
         yield return timer;
+        _isSpeedBoostActive = false;
         _playerSpeed -= bonus;
         _thrusterSprite.color = _baseColor;
     }
