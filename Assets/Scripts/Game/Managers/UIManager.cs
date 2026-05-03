@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
-using TMPro.Examples;
 
 public class UIManager : MonoBehaviour
 {

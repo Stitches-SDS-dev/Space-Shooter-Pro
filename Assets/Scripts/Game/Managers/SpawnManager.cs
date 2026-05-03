@@ -31,7 +31,12 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private float _powerupSpawnDelay;
     [SerializeField]
-    private GameObject[] _powerups;
+    private float _rarePowerupChance;
+    [SerializeField]
+    private GameObject[] _basicPowerups;
+    [SerializeField]
+    private GameObject[] _rarePowerups;
+    private GameObject[] _powerupsToUse;
 
     private Vector3 _spawnPosition = new Vector3();
     private WaitForSeconds _enemySpawnTimer;
@@ -70,8 +75,18 @@ public class SpawnManager : MonoBehaviour
             // set position parameters
             _spawnPosition.x = Random.Range(-_xSpawnBind, _xSpawnBind);
 
-            int powerupSelector = Random.Range(0, _powerups.Length);
-            Instantiate(_powerups[powerupSelector], _spawnPosition, Quaternion.identity, _objectParents[2]);
+            float powerupArraySelection = Random.Range(0f, 1f);
+            if (powerupArraySelection < _rarePowerupChance)
+            {
+                _powerupsToUse = _rarePowerups;
+            }
+            else
+            {
+                _powerupsToUse = _basicPowerups;
+            }
+
+            int powerupSelector = Random.Range(0, _powerupsToUse.Length);
+            Instantiate(_powerupsToUse[powerupSelector], _spawnPosition, Quaternion.identity, _objectParents[2]);
             yield return _powerupSpawnTimer;
         }
     }

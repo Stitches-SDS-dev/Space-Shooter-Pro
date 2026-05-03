@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -27,6 +26,8 @@ public class Player : MonoBehaviour
     private int _maxAmmo = 15;
     [SerializeField]
     private int _currentAmmo;
+    [SerializeField]
+    private float _baseFireRate;
 
     [Header("Player Binds")]
     [SerializeField]
@@ -34,15 +35,25 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float _playerWrap, _xPlayerBind, _upperPlayerBind, _lowerPlayerBind;
 
+    [Header("Genade Settings")]
+    [SerializeField]
+    private bool _isGrenadeActive = false;
+    [SerializeField]
+    private GameObject _grenadePrefab;
+    [SerializeField]
+    private float _yGrenadeOffset;
+    [SerializeField]
+    private AudioClip _grenadeAudio;
+    [SerializeField]
+    private float _grenadeFireRate = 1f;
+
     [Header("Laser Settings")]
     [SerializeField]
     private GameObject _laserPrefab;
     [SerializeField]
-    private Transform _laserParent;
+    private Transform _weaponParent;
     [SerializeField]
     private float _yLaserOffset;
-    [SerializeField]
-    private float _fireRate = 0.5f;
     [SerializeField]
     private AudioClip _laserAudio;
 
@@ -76,8 +87,10 @@ public class Player : MonoBehaviour
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     private Vector3 _laserOffset = new Vector3();
+    private Vector3 _grenadeOffset = new Vector3();
     private float _canFire = 0f;
     private bool _isSpeedBoostActive = false;
+    private float _fireRate;
 
     void Start()
     {
@@ -93,6 +106,8 @@ public class Player : MonoBehaviour
         if (_uiManager == null) Debug.LogError("UI Manager not found!");
 
         _mainCamera = Camera.main;
+
+        _fireRate = _baseFireRate;
     }
 
     void Update()
@@ -103,7 +118,7 @@ public class Player : MonoBehaviour
             PlayerMovement();
 
             // check for input and rate of fire delay
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) FireLaser();
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Mouse0)) && Time.time >= _canFire) Shoot();
         }
     }
 
@@ -128,29 +143,41 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void FireLaser()
+    private void Shoot()
     {
         // fire laser with an offset above the Player
         _canFire = Time.time + _fireRate;
-        if (!_isTripleShotActive)
+        if (!_isGrenadeActive)
         {
-            if (_currentAmmo > 0)
+            if (!_isTripleShotActive)
             {
-                // fire standard laser
-                _laserOffset = transform.position;
-                _laserOffset.y += _yLaserOffset;
-                Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _laserParent);
-                AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
+                if (_currentAmmo > 0)
+                {
+                    // fire standard laser
+                    _laserOffset = transform.position;
+                    _laserOffset.y += _yLaserOffset;
+                    Instantiate(_laserPrefab, _laserOffset, Quaternion.identity, _weaponParent);
+                    AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
 
-                _currentAmmo--;
-                _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
+                    _currentAmmo--;
+                    _uiManager.UpdateAmmo(_currentAmmo, _maxAmmo);
+                }
+            }
+            else
+            {
+                // fire triple shot if active
+                Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity, _weaponParent);
+                AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
             }
         }
         else
         {
-            // fire triple shot if active
-            Instantiate(_tripleShotPrefab, transform.position, Quaternion.identity, _laserParent);
-            AudioSource.PlayClipAtPoint(_laserAudio, _mainCamera.transform.position);
+            // fire grenade
+            _grenadeOffset = transform.position;
+            _grenadeOffset.y += _yGrenadeOffset;
+            Instantiate(_grenadePrefab, _grenadeOffset, Quaternion.identity, _weaponParent);
+            //play audio
+            AudioSource.PlayClipAtPoint(_grenadeAudio, _mainCamera.transform.position);
         }
     }
 
@@ -254,7 +281,19 @@ public class Player : MonoBehaviour
             case PowerupType.ExtraLife:
                 AddExtraLife((int) bonus, powerup);
                 break;
+            case PowerupType.Grenade:
+                ActivateGrenade(timer, powerup);
+                break;
         }
+    }
+
+    private void ActivateGrenade(WaitForSeconds timer, GameObject powerup)
+    {
+        _isGrenadeActive = true;
+        _fireRate = _grenadeFireRate;
+        StartCoroutine(GrenadeCooldown(timer));
+        AudioSource.PlayClipAtPoint(_powerupAudio, _mainCamera.transform.position);
+        Destroy(powerup, 0.1f);
     }
 
     private void AddExtraLife(int bonus, GameObject powerup)
@@ -350,6 +389,13 @@ public class Player : MonoBehaviour
     {
         yield return timer;
         _isTripleShotActive = false;
+    }
+
+    private IEnumerator GrenadeCooldown(WaitForSeconds timer)
+    {
+        yield return timer;
+        _isGrenadeActive = false;
+        _fireRate = _baseFireRate;
     }
     #endregion
 }

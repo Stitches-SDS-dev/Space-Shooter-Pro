@@ -6,7 +6,8 @@ public enum PowerupType
     SpeedBoost,
     ShieldBonus,
     AmmoPickup,
-    ExtraLife
+    ExtraLife,
+    Grenade
 }
 
 public class Powerup : MonoBehaviour
