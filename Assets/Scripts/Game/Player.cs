@@ -83,6 +83,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Color _boostColor = Color.white;
 
+    [Header("Camera Shake Options")]
+    [SerializeField]
+    private float _shakeDelay;
+    [SerializeField]
+    private float _maxShake;
+
     private Camera _mainCamera;
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
@@ -229,6 +235,7 @@ public class Player : MonoBehaviour
         else
         {
             _playerLives--;
+            CameraShake(0.5f);
             _uiManager.UpdateLives(_playerLives);
             switch (_playerLives) {
                 case 0:
@@ -397,5 +404,39 @@ public class Player : MonoBehaviour
         _isGrenadeActive = false;
         _fireRate = _baseFireRate;
     }
+    #endregion
+
+    #region --- Camera Shake ---
+
+    void CameraShake(float duration)
+    {
+        StartCoroutine(CameraShakeRoutine(duration));
+    }
+
+    IEnumerator CameraShakeRoutine(float duration)
+    {
+
+        Transform main = Camera.main.transform;
+        WaitForSeconds wait = new WaitForSeconds(_shakeDelay);
+        Vector3 rotation = main.localEulerAngles;
+        rotation.z = _maxShake;
+
+        while (duration >= 0)
+        {
+
+            main.eulerAngles = rotation;
+            rotation.z -= 0.1f;
+            yield return wait;
+
+            main.eulerAngles = -rotation;
+            yield return wait;
+            duration -= 0.1f;
+
+            Debug.Log(duration);
+        }
+
+        main.eulerAngles = Vector3.zero;
+    }
+
     #endregion
 }
