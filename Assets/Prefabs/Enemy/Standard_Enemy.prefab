@@ -144,6 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3a9555b8a9ac0c428fb6ea91274fab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isSideMover: 0
+  _minDirChangeTime: 1.5
+  maxDirChangeTime: 3
   _enemySpeed: 2
   _scoreValue: 10
   _enemyDirection: {x: 0, y: -1, z: 0}

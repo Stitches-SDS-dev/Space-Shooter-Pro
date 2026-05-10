@@ -4,6 +4,10 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
+    private bool _isSideMover = false;
+    [SerializeField]
+    private float _minDirChangeTime, maxDirChangeTime;
+    [SerializeField]
     private float _enemySpeed;
     [SerializeField]
     private int _scoreValue;
@@ -55,6 +59,12 @@ public class Enemy : MonoBehaviour
         _mainCamera = Camera.main;
 
         StartCoroutine(FireRoutine());
+        
+        if (Random.Range(0f, 1f) < 0.3f)
+        {
+            _isSideMover = true;
+            StartCoroutine(DirectionSwitcher());
+        }
     }
 
     private void Update()
@@ -116,5 +126,19 @@ public class Enemy : MonoBehaviour
                 Destroy(this.gameObject, _destroyDelay);
             }
         }       
+    }
+
+    private IEnumerator DirectionSwitcher()
+    {
+        if (Random.Range(0f, 1f) <= 0.5f) _enemyDirection.x = -1f;
+        else _enemyDirection.x = 1f;
+
+        while (_isSideMover)
+        {
+            yield return new WaitForSeconds(Random.Range(_minDirChangeTime, maxDirChangeTime));
+
+            if (_enemyDirection.x < 0f) _enemyDirection.x = 1f;
+            else _enemyDirection.x = -1f;
+        }
     }
 }
